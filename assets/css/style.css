@@ -193,3 +193,27 @@ body
 	background: orange;
 }
 
+#yourAttack
+{
+	display: none;
+}
+
+#hisAttack
+{
+	display: none;
+}
+
+#loseMsg
+{
+	display: none;
+}
+
+#winMsg
+{
+	display: none;
+}
+
+#restartButton
+{
+	display: none;
+}
