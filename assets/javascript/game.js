@@ -16,12 +16,19 @@ var enemyHealth;
 var yourAttackPower;
 var EnemyCounterAttackPower;
 
+//Sets global variable to true in function win_lose() when we have defeated an enemy
+//which skips the return attack by (chosenEnemy)
+var isEnemyDefeated = false;
+
+//Create a counter to know when last enemy is defeated so we can display winning msg
+var EnemiesDefeatedCount = 0;
+
 //Object1
 var Obi = 
 {
 	//Attributes
 	name: "Obi-Wan Kenobi",
-	health: 125,
+	health: 120,
 	attkPower: 8,								//8 base(8, 16, 24, ...)
 	counterAttkPower: 5,
 
@@ -170,7 +177,12 @@ $(".characterContainer").on("click", function()
 		//underneath (Your Character) located at <div id="choice">
 
 		 chosenCharacter = $(this);		  //(this) refers to the img-button that I clicked on
-										  	  //store the value of the <img> so when we move the remanining characters, we don't relocate chosen character
+										  //store the value of the <img> so when we move the remanining characters, we don't relocate chosen character
+
+		 yourHealth = parseInt(chosenCharacter.attr("starWarsCharacterHealth"));						//your health   //USE this global variable in the ("#attack") button method
+		 yourAttackPower = parseInt(chosenCharacter.attr("starWarsCharacterAttkPower"));				//use this and multiply by counter for each iteration for base increase attack 
+		 																								//USE this global variable in the ("#attack") button method
+		 
 		
 
 		$("#choice").append(chosenCharacter); //store chosenCharacter(this) at <div id="choice">
@@ -228,6 +240,10 @@ $(".characterContainer").on("click", function()
 		//Click on enemy in (Enemies Available To Attack) and move that chosen enemy to (Defender) area.
 		 chosenEnemy = $(this);						//(this) refers to the chosen enemy in the (Enemis Available To Attack)
 
+		 
+		 enemyHealth = parseInt(chosenEnemy.attr("starWarsCharacterHealth"));							//enemy health  //USE this global variable in the ("#attack") button method
+		 EnemyCounterAttackPower = parseInt(chosenEnemy.attr("starWarsCharacterCounterAttkPower")); 	// Enemies counter attack will remain the same, yours goes up for each attack.
+
 		//Use while loop to go through 4 objects and check to see which object we are moving so we hide his name & health
 		var j = 1;
 		
@@ -270,16 +286,26 @@ $(".characterContainer").on("click", function()
 		$("#defenderName").text($(this).attr("starWarsCharacterName"));			//TRY: $("#defenderName").append($(this).attr("starWarsCharacterName"));
 		$("#defenderHealth").text($(this).attr("starWarsCharacterHealth"));		//TRY: $("#defenderHealth").append($(this).attr("starWarsCharacterHealth"));
 
+		//NOTE: when we select a second enemy in the defender we hide his name
+		//      and health we need the name and health to reappear
+		$("#defenderName").show();
+		$("#defenderHealth").show();
 
+		//NOTE: when select another enemy to fight hide the winning message
+		$("#winMsg").hide();
 
 
 		//Set enemy in defender to true so we don't get error message when
 		//clicking the button
 		enemiesInDefender = true;
 
+		EnemiesDefeatedCount++;
+		console.log(EnemiesDefeatedCount);
 
 
 	}
+
+
 		
 });
 
@@ -294,50 +320,44 @@ $("#attackButton").on("click", function()
 	{
 		buttonCounter++;
 
-		$("#yourAttack").show();																		//when attack button is clicked display your damage and enemies damage message
-		$("#hisAttack").show();
-
-
-		 yourHealth = parseInt(chosenCharacter.attr("starWarsCharacterHealth"));						//your health
-		 enemyHealth = parseInt(chosenEnemy.attr("starWarsCharacterHealth"));							//enemy health
-
-		 yourAttackPower = parseInt(chosenCharacter.attr("starWarsCharacterAttkPower"));				// use this and multiply by counter for each iteration for base increase attack
-		 EnemyCounterAttackPower = parseInt(chosenEnemy.attr("starWarsCharacterCounterAttkPower")); 	// Enemies counter attack will remain the same, yours goes up for each attack.
+		$("#yourAttack").show();																		//when attack button is clicked display your damage and 
+		$("#hisAttack").show();																			//display enemy's damage as well.
 		
-		//This is where the fighting begins
-
-		if(yourHealth <= 0)
-		{
-			$("#loseMsg").show();
-			$("#restartButton").show();
-		}
-		else if(enemyHealth <= 0)
-		{
-			$("#winMsg").show();
-		}
-		else
-		{
+	
 			
-			//Where chosenCharacter and enemyCharacter attack causing damage
-			enemyHealth = enemyHealth - (buttonCounter * yourAttackPower);						//you attack enemy
+		//You attack on (chosen Enemy)
+		enemyHealth = enemyHealth - (buttonCounter * yourAttackPower);
 
-			yourHealth = yourHealth - EnemyCounterAttackPower;
+							
 
-			console.log(enemyHealth);
-			console.log(yourHealth);
+		
 
-			//Display chosen character's health status in Your characterImage && display results in <h5> message
-			$("#chosenHealth").text(yourHealth);
-			$(".enemyYouAttack").text(chosenEnemy.attr("starWarsCharacterName"));
-			$("#yourAttackDamage").text(buttonCounter * yourAttackPower)
+		
+
+		//check to see if enemy is defeated prior to enemy attacking back at you(chosen character)
+		win_lose();
+
+		if(isEnemyDefeated != true)
+		{
+			//Enemy attack on (chosen character)
+			yourHealth = yourHealth - EnemyCounterAttackPower;		
 
 			//Display enemy's health status in Defender image && display results in <h5> msg
 			$("#defenderHealth").text(enemyHealth);
 			$(".enemyYouAttack").text(chosenEnemy.attr("starWarsCharacterName"));
 			$("#enemyAttackDamage").text(EnemyCounterAttackPower)
-
-
 		}
+
+		//check to see if enemy has defeated you
+		win_lose();
+
+		//Display chosen character's health status in Your characterImage && display results in <h5> message
+		$("#chosenHealth").text(yourHealth);
+		$(".enemyYouAttack").text(chosenEnemy.attr("starWarsCharacterName"));
+		$("#yourAttackDamage").text(buttonCounter * yourAttackPower)
+
+		//reset isEnemyDefeated variable
+		 isEnemyDefeated = false;
 
 
 
@@ -346,26 +366,91 @@ $("#attackButton").on("click", function()
 
 });
 
+
 //Restart Everything
 $("#restartButton").on("click", function()
 {
 
-
- enemiesAvailable = false;												//This allows us to know if all 3 enemies are in (Enemies Available To Attack) if that is true then 
- enemiesInDefender = false;
- buttonCounter = 0;
-
-
-
-//Button Area
- yourHealth = 0;
- enemyHealth = 0;
-
-yourAttackPower = 0;
-EnemyCounterAttackPower = 0;
-
-
-
-
+	//reload page
+	location.reload();
 
 });
+
+//Functino1(check to see if the enemy is defeated or if you've been defeated)
+function win_lose()
+{
+
+	if(yourHealth <= 0)
+	{	
+		//losing msg
+		$("#loseMsg").show();
+
+		//restart button
+		$("#restartButton").show();
+
+		//Hide both attack damage messages before selecting a new character to fight
+		$("#yourAttack").hide();																		
+		$("#hisAttack").hide();
+		
+				
+	}
+	else if(enemyHealth <= 0)
+	{
+		
+
+		if(EnemiesDefeatedCount != 3)
+		{
+			//Winning msg
+			$("#winMsg").show();
+
+			//hide chosen enemy you've defeated
+			chosenEnemy.hide();	//hide enemy image
+
+			//hide defender name
+			$("#defenderName").hide();
+
+			//hide defender health
+			$("#defenderHealth").hide();
+
+			//Hide both attack damage messages before selecting a new character to fight
+			$("#yourAttack").hide();																		
+			$("#hisAttack").hide();
+
+			//sets variable to true which skips enemy return attack on you
+			isEnemyDefeated = true;
+
+			
+
+		}
+		else if(EnemiesDefeatedCount == 3)	//Execute when we've defeated all enemies
+		{
+
+			//Win msg Game Over all enemies defeated
+			$("#winMsg2").show();
+
+			//restart button
+			$("#restartButton").show();
+
+			//hide chosen enemy you've defeated
+			chosenEnemy.hide();	//hide enemy image
+
+			//hide defender name
+			$("#defenderName").hide();
+
+			//hide defender health
+			$("#defenderHealth").hide();
+
+			//Hide both attack damage messages before selecting a new character to fight
+			$("#yourAttack").hide();																		
+			$("#hisAttack").hide();
+
+			//sets variable to true which skips enemy return attack on you
+			isEnemyDefeated = true;
+
+		}
+
+		
+	}
+
+
+}

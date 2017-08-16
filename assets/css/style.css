@@ -206,14 +206,50 @@ body
 #loseMsg
 {
 	display: none;
+	color: red;
+	font-weight: bold;
 }
 
 #winMsg
 {
 	display: none;
+	color: red;
+	font-weight: bold;
+}
+
+#winMsg2
+{
+	display: none;
+	color: red;
+	font-weight: bold;
 }
 
 #restartButton
 {
 	display: none;
+	background: orange;
 }
+
+#yourAttack
+{
+	color: black;
+	font-weight: bold;
+
+}
+
+#hisAttack
+{
+	color: black;
+	font-weight: bold;
+}
+
+#yourAttackDamage
+{
+	color: red;
+}
+
+#enemyAttackDamage
+{
+	color: red;
+}
+
