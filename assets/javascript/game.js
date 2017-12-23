@@ -201,26 +201,29 @@ $(".characterContainer").on("click", function()
 		$("#name4").hide();
 		$("#health4").hide();
 
-		$("#chosenName").text($(this).attr("starWarsCharacterName")); 	 	//display name of character
-		$("#chosenHealth").text($(this).attr("starWarsCharacterHealth")); 	//display health of character
+		$("#chosenName").text($(this).attr("starWarsCharacterName")); 	 								//display name of character
+		$("#chosenHealth").text($(this).attr("starWarsCharacterHealth")); 								//display health of character
 
-																			//NOTE: console.log($("#pic1").attr("starWarsCharacterName")); = "Luke Skywalker"
+																										//NOTE: console.log($("#pic1").attr("starWarsCharacterName")); = "Luke Skywalker"
 
 		//append the remaining(unchosen charachters underneath Enemis Available To Attack)
 		var i = 0;
-		var pos = 1;		//use to add (#enemyName) & (#enemyHealth) at correct div< enemyName1-3> div<enemyHealth1-3>
+
+		//use to add (#enemyName) & (#enemyHealth) at correct div< enemyName1-3> div<enemyHealth1-3>
+		var pos = 1;		
+		
 		while( i < arrayOfObjects.length)
 		{
 			
 			if($("#pic"+ i).attr("starWarsCharacterName") != $(this).attr("starWarsCharacterName"))		//$("#pic" + i) goes through all 4 characters 			&& 
 			{																							//$(this).attr("starWarsCharacterName") = chosen clicked image character.					
 			
-				$("#enemiesRemain").append($("#pic" + i));				//move enemy pic underneath (Enemies Available To Attack)
+				$("#enemiesRemain").append($("#pic" + i));												//move enemy pic(<img id=\'' + "pic" + i + '\'>) underneath (Enemies Available To Attack)
 
 				//For each iteration store Name: ("#enemyName1")...("#enemyName4")
-				//& store Health ("#enemyHealth1")...("#enemyHealth4")
-				$("#enemyName" + pos).append(arrayOfObjects[i].name);		//display enemy name. //SAME AS: $("#enemyName").text($("#pic" + i).attr("starWarsCharacterName"));	
-				$("#enemyHealth" + pos).append(arrayOfObjects[i].health);	//display health of enemy //SAME AS: $("#enemyHealth").text($("#pic" + i).attr("starWarsCharacterHealth"));
+				//& store Health ("#enemyHealth1")...("#enemyHealth4") onto each enemy pic
+				$("#enemyName" + pos).append(arrayOfObjects[i].name);									//display enemy name. //SAME AS: $("#enemyName").text($("#pic" + i).attr("starWarsCharacterName"));	
+				$("#enemyHealth" + pos).append(arrayOfObjects[i].health);								//display health of enemy //SAME AS: $("#enemyHealth").text($("#pic" + i).attr("starWarsCharacterHealth"));
 
 				$("#pic" + i).addClass("enemyColor");
 
